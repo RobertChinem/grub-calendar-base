@@ -63,13 +63,23 @@ function Visualization({ freeTimes, setFreeTimes }: VisualizationProps) {
 
     const getOverlapByWeekDay = useCallback(
         (weekDay: number) => {
-            const result = getOverlap(
-                freeTimes.filter(
-                    (freeTime) =>
-                        selectedUsers.includes(freeTime.name) &&
-                        freeTime.start.getDay() === weekDay
-                )
+            const freeTimesTmp = freeTimes.filter(
+                (freeTime) =>
+                    selectedUsers.includes(freeTime.name) &&
+                    freeTime.start.getDay() === weekDay
             )
+
+            const usersFreeTime = freeTimesTmp.map(({ name }) => name)
+
+            if (selectedUsers.some(user => !usersFreeTime.includes(user))) {
+                return {
+                    start: 0,
+                    end: 0,
+                    error: true
+                }
+            }
+
+            const result = getOverlap(freeTimesTmp)
             const startTime = new Date(result.start).getHours()
             const endTime = new Date(result.end).getHours()
             return {
@@ -97,7 +107,7 @@ function Visualization({ freeTimes, setFreeTimes }: VisualizationProps) {
             <div className="h-full px-4 pt-8">
                 <h1 className="text-4xl font-semibold">Visualizar</h1>
 
-                <div className="mt-16 grid auto-cols-max grid-flow-col gap-4">
+                <div className="mt-8 grid grid-cols-4 gap-4">
                     {users.map((user, index) => (
                         <button
                             onClick={() => toggleUser(user)}

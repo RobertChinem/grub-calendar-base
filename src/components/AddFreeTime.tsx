@@ -1,13 +1,14 @@
 import FreeTime from "entities/freeTime"
-import { useRef, useState } from "react"
+import { useRef } from "react"
 
 
 interface AddFreeTimeProps {
+    setRoute: (route: string) => void
     freeTimes: FreeTime[]
     setFreeTimes: (freeTimes: FreeTime[]) => void
 }
 
-function AddFreeTime({ freeTimes, setFreeTimes }: AddFreeTimeProps) {
+function AddFreeTime({ setRoute, freeTimes, setFreeTimes }: AddFreeTimeProps) {
     const inputNameRef = useRef<HTMLInputElement>(null)
     const inputDateStartRef = useRef<HTMLInputElement>(null)
     const inputDateEndRef = useRef<HTMLInputElement>(null)
@@ -42,13 +43,13 @@ function AddFreeTime({ freeTimes, setFreeTimes }: AddFreeTimeProps) {
 
         freeTimes.push({ name, start, end })
         setFreeTimes([...freeTimes])
+        setRoute('visualization')
     }
 
 
     return (
         <div className="h-full px-4 pt-8">
             <h1 className="text-4xl font-semibold">Adicionar</h1>
-            {JSON.stringify(freeTimes, null, 2)}
             <div className="mt-8 flex flex-col gap-4">
                 <div>
                     <label
