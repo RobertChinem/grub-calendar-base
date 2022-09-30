@@ -1,17 +1,54 @@
 import FreeTime from "entities/freeTime"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
-function AddFreeTime() {
-    const [freeTimes, setFreeTimes] = useState<FreeTime[]>([])
+
+interface AddFreeTimeProps {
+    freeTimes: FreeTime[]
+    setFreeTimes: (freeTimes: FreeTime[]) => void
+}
+
+function AddFreeTime({ freeTimes, setFreeTimes }: AddFreeTimeProps) {
+    const inputNameRef = useRef<HTMLInputElement>(null)
+    const inputDateStartRef = useRef<HTMLInputElement>(null)
+    const inputDateEndRef = useRef<HTMLInputElement>(null)
 
     function handleAddFreeTime() {
-        alert('Voce clicou no botao')
+        const name = inputNameRef.current?.value || ''
+        const dateStart = inputDateStartRef.current?.value || ''
+        const dateEnd = inputDateEndRef.current?.value || ''
+
+        if (name === '') {
+            alert('Nome não pode ser vazio')
+            return
+        }
+
+        if (dateStart === '') {
+            alert('Data de início não pode ser vazia')
+            return
+        }
+
+        if (dateEnd === '') {
+            alert('Data de fim não pode ser vazia')
+            return
+        }
+
+        const start = new Date(dateStart)
+        const end = new Date(dateEnd)
+
+        if (start.getTime() >= end.getTime()) {
+            alert('Intervalo inválido')
+            return
+        }
+
+        freeTimes.push({ name, start, end })
+        setFreeTimes([...freeTimes])
     }
 
 
     return (
         <div className="h-full px-4 pt-8">
             <h1 className="text-4xl font-semibold">Adicionar</h1>
+            {JSON.stringify(freeTimes, null, 2)}
             <div className="mt-8 flex flex-col gap-4">
                 <div>
                     <label
@@ -21,6 +58,7 @@ function AddFreeTime() {
                         Nome
                     </label>
                     <input
+                        ref={inputNameRef}
                         type="text"
                         id="name"
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
@@ -37,6 +75,7 @@ function AddFreeTime() {
                     </label>
 
                     <input
+                        ref={inputDateStartRef}
                         id="date-start"
                         type="datetime-local"
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
@@ -51,6 +90,7 @@ function AddFreeTime() {
                         Data de Fim
                     </label>
                     <input
+                        ref={inputDateEndRef}
                         id="date-end"
                         type="datetime-local"
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
